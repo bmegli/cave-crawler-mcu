@@ -15,7 +15,7 @@ Firmware code written for Teensy 3.5.
 ## Dependencies
 
 - [xv11lidar-arduino](https://github.com/bmegli/xv11lidar-arduino)
-- [EM7180] (https://github.com/simondlevy/EM7180)
+- [EM7180](https://github.com/simondlevy/EM7180)
 
 ## Building
 
