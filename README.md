@@ -16,6 +16,8 @@ Firmware code written for Teensy 3.5.
 
 - [xv11lidar-arduino](https://github.com/bmegli/xv11lidar-arduino)
 - [EM7180](https://github.com/simondlevy/EM7180)
+   - [CrossPlatformI2C] (https://github.com/simondlevy/CrossPlatformI2C)
+
 
 ## Building
 

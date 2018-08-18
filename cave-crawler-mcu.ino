@@ -54,9 +54,6 @@ const int IMU_INTERRUPT_PIN = 2;
 const int VERTICAL_LIDAR_RPM=250;
 
 /* IMU */
-const uint8_t  ARES           = 8;    // Gs
-const uint16_t GRES           = 2000; // degrees per second
-const uint16_t MRES           = 1000; // microTeslas
 const uint8_t  MAG_RATE       = 100;  // Hz
 const uint16_t ACCEL_RATE     = 200;  // Hz
 const uint16_t GYRO_RATE      = 200;  // Hz
@@ -102,7 +99,7 @@ Encoder left_encoder(LEFT_ENCODER_PIN1, LEFT_ENCODER_PIN2);
 Encoder right_encoder(RIGHT_ENCODER_PIN1, RIGHT_ENCODER_PIN2);
 
 XV11Lidar vertical_lidar(VERTICAL_LIDAR_SERIAL, VERTICAL_LIDAR_PWM_PIN );
-EM7180_Master em7180 = EM7180_Master(ARES, GRES, MRES, MAG_RATE, ACCEL_RATE, GYRO_RATE, BARO_RATE, Q_RATE_DIVISOR);
+EM7180_Master em7180 = EM7180_Master(MAG_RATE, ACCEL_RATE, GYRO_RATE, BARO_RATE, Q_RATE_DIVISOR);
 
 //temp time measure
 unsigned long last_loop_time_us;
