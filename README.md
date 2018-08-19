@@ -15,9 +15,9 @@ Firmware code written for Teensy 3.5.
 ## Dependencies
 
 - [xv11lidar-arduino](https://github.com/bmegli/xv11lidar-arduino)
-- [EM7180](https://github.com/simondlevy/EM7180)
-   - [CrossPlatformI2C] (https://github.com/simondlevy/CrossPlatformI2C)
-
+   - [Arduino-PID-Library](https://github.com/br3ttb/Arduino-PID-Library)
+- [EM7180](https://github.com/bmegli/EM7180.git) (async-i2c branch)
+   - [CrossPlatformI2C](https://github.com/bmegli/CrossPlatformI2C.git)
 
 ## Building
 
