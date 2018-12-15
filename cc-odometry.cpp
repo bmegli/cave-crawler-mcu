@@ -21,15 +21,14 @@
 void imuInterruptHandler();
 
 enum ImuState {WAITING_FOR_NEW_DATA, READING_STATUS, READING_QUATERNION};
-ImuState imuState;
-	
-Encoder left_encoder(LEFT_ENCODER_PIN1, LEFT_ENCODER_PIN2);
-Encoder right_encoder(RIGHT_ENCODER_PIN1, RIGHT_ENCODER_PIN2);
-EM7180_Master em7180 = EM7180_Master(MAG_RATE, ACCEL_RATE, GYRO_RATE, BARO_RATE, Q_RATE_DIVISOR);
 
-volatile bool imu_new_data;
-volatile unsigned long imu_timestamp_us;
+static ImuState imuState;	
+static Encoder left_encoder(LEFT_ENCODER_PIN1, LEFT_ENCODER_PIN2);
+static Encoder right_encoder(RIGHT_ENCODER_PIN1, RIGHT_ENCODER_PIN2);
+static EM7180_Master em7180 = EM7180_Master(MAG_RATE, ACCEL_RATE, GYRO_RATE, BARO_RATE, Q_RATE_DIVISOR);
 
+static volatile bool imu_new_data;
+static volatile unsigned long imu_timestamp_us;
 
 void imuInterruptHandler()
 {
@@ -37,7 +36,7 @@ void imuInterruptHandler()
   imu_new_data = true;    
 }
 
-void setupIMU()
+void setupOdometry()
 {
   Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, I2C_RATE_400);
   
@@ -54,10 +53,8 @@ void setupIMU()
     }   
 }
 
-void processIMU()
+void processOdometry(odometry_usb_packet &packet)
 {
-  odometry_packet packet;
-
   switch(imuState)
   {
   case WAITING_FOR_NEW_DATA:
@@ -118,4 +115,3 @@ void processIMU()
     Serial.println("got quaternion");
   }  
 }
-

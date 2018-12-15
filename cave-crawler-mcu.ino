@@ -14,6 +14,7 @@
 
 #include "cc-odometry.h"
 #include "cc-xv11lidar.h"
+#include "cc-rplidar.h"
 
 /* The protocol 
 
@@ -26,9 +27,7 @@ End of message   byte
 
 */
 
-
 void timeStats();
-
 
 //temp time measure
 unsigned long last_loop_time_us;
@@ -47,8 +46,9 @@ void setup()
   delay(1000);
   Serial.println("setup...");
 
-  setupIMU();
-//  setupXV11Lidar();
+  setupOdometry();
+  setupXV11Lidar();
+  setupRPLidar();
 
   //temp
   last_loop_time_us=micros();
@@ -58,16 +58,16 @@ void setup()
 
 void loop()
 {
-  processIMU();
-//  processXV11Lidar();
+  odometry_usb_packet odometry_packet;
+  xv11lidar_usb_packet xv11lidar_packet;
+  rplidar_usb_packet rplidar_packet;
   
- 
+  processOdometry(odometry_packet);
+  processXV11Lidar(xv11lidar_packet);
+  processRPLidar(rplidar_packet);
+  
   timeStats();
 }
-
-
-unsigned long max_diff; //temp
-
 
 void timeStats()
 {
@@ -86,11 +86,8 @@ void timeStats()
     Serial.print(loop_time, DEC);
     Serial.print(" max ");
     Serial.println(max_loop_time_us, DEC);
-    Serial.print(" max diff ");
-    Serial.println(max_diff, DEC);
     
     max_loop_time_us=0;
-    max_diff=0;
   }  
 }
 

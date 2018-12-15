@@ -34,7 +34,7 @@ const uint16_t GYRO_RATE      = 200;  // Hz
 const uint8_t  BARO_RATE      = 50;   // Hz
 const uint8_t  Q_RATE_DIVISOR = 2;    // 1/2 gyro rate
 
-struct odometry_packet
+struct odometry_usb_packet
 {
   uint32_t timestamp_us;
   int32_t left_encoder_counts;
@@ -44,7 +44,7 @@ struct odometry_packet
 
 /* Functions */ 
 
-void setupIMU();
-void processIMU();
+void setupOdometry();
+void processOdometry(odometry_usb_packet &packet);
 
 #endif

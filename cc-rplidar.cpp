@@ -12,30 +12,20 @@
  * GNU General Public License for more details.
  */
 
-#ifndef CC_XV11LIDAR
-#define CC_XV11LIDAR
+#include "cc-rplidar.h"
 
-#include <stdint.h> //uint8_t, uint16_t, uint32_T
+static RPLidar lidar(RPLIDAR_SERIAL, RPLIDAR_PWM_PIN); 
 
-/* Pins */
-const int XV11LIDAR_PWM_PIN = 35;
-
-/* Serials */
-#define XV11LIDAR_SERIAL Serial5
-
-/* Vertical lidar */
-const int XV11LIDAR_RPM=250;
-
-struct xv11lidar_usb_packet
+void setupRPLidar()
 {
-  uint32_t timestamp_us;
-  uint8_t angle_quad; //0-89 for readings 0-3 356-359
-  uint16_t speed64;    //divide by 64 for speed in rpm 
-  uint16_t distances[4]; //flags and distance or error code
-};
+  lidar.setup(RPLIDAR_RPM);
+  lidar.start();
+}
 
-/* Functions */ 
-void setupXV11Lidar();
-void processXV11Lidar(xv11lidar_usb_packet &packet);
+void processRPLidar(rplidar_usb_packet &packet)
+{
+  if( !lidar.processAvailable(&packet) )
+    return;
 
-#endif
+  //encode and emit packet over USB
+}
