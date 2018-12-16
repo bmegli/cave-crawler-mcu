@@ -15,6 +15,7 @@
 #include "cc-odometry.h"
 #include "cc-xv11lidar.h"
 #include "cc-rplidar.h"
+#include "cc-usb-protocol.h"
 
 /* The protocol 
 
@@ -61,10 +62,17 @@ void loop()
   odometry_usb_packet odometry_packet;
   xv11lidar_usb_packet xv11lidar_packet;
   rplidar_usb_packet rplidar_packet;
-  
-  processOdometry(odometry_packet);
-  processXV11Lidar(xv11lidar_packet);
-  processRPLidar(rplidar_packet);
+  bool got_odometry=false, got_xv11lidar=false, got_rplidar=false;
+
+  //get data from devices
+  got_odometry = processOdometry(odometry_packet);
+  got_xv11lidar = processXV11Lidar(xv11lidar_packet);
+  got_rplidar = processRPLidar(rplidar_packet);
+
+  //send over USB
+  if(got_odometry) usb_send_odometry(odometry_packet);
+  if(got_xv11lidar) usb_send_xv11lidar(xv11lidar_packet);
+  if(got_rplidar) usb_send_rplidar(rplidar_packet);
   
   timeStats();
 }

@@ -45,6 +45,6 @@ struct odometry_usb_packet
 /* Functions */ 
 
 void setupOdometry();
-void processOdometry(odometry_usb_packet &packet);
+bool processOdometry(odometry_usb_packet &packet);
 
 #endif

@@ -38,6 +38,6 @@ struct RPLidarPacket
 
 /* Functions */ 
 void setupRPLidar();
-void processRPLidar(rplidar_usb_packet &packet);
+bool processRPLidar(rplidar_usb_packet &packet);
 
 #endif

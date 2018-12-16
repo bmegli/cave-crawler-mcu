@@ -22,10 +22,7 @@ void setupRPLidar()
   lidar.start();
 }
 
-void processRPLidar(rplidar_usb_packet &packet)
+bool processRPLidar(rplidar_usb_packet &packet)
 {
-  if( !lidar.processAvailable(&packet) )
-    return;
-
-  //encode and emit packet over USB
+  return lidar.processAvailable(&packet);  
 }

@@ -53,13 +53,13 @@ void setupOdometry()
     }   
 }
 
-void processOdometry(odometry_usb_packet &packet)
+bool processOdometry(odometry_usb_packet &packet)
 {
   switch(imuState)
   {
   case WAITING_FOR_NEW_DATA:
     if(!imu_new_data)
-      return;
+      return false;
 
     imu_new_data = false;
   
@@ -71,47 +71,42 @@ void processOdometry(odometry_usb_packet &packet)
     packet.right_encoder_counts=right_encoder.read();
 
     imuState=READING_STATUS;
-    
   case READING_STATUS:
     if(!em7180.checkEventStatusAsync())
-      return;    
+      return false;    
 
-    if(Wire.getError())
-    {
-      Serial.print("Wire ERROR: ");
-      Serial.println(Wire.getError(), DEC);
-    }
     if (em7180.gotError() || Wire.getError()) 
     {
-      Serial.print("em7180 ERROR: ");
-      Serial.print(em7180.getErrorString());
-      Serial.print("Wire status ");
-      Serial.println(Wire.status(), DEC);
+      //Serial.print("em7180 ERROR: ");
+      //Serial.print(em7180.getErrorString());
+      //Serial.print("Wire status ");
+      //Serial.println(Wire.status(), DEC);
       imuState=WAITING_FOR_NEW_DATA;
-      return;
+      return false;
     }
 
     if (!em7180.gotQuaternion())
     {
       imuState=WAITING_FOR_NEW_DATA;
-      return;
+      return false;
     }  
     imuState=READING_QUATERNION;    
   case READING_QUATERNION:
     if(!em7180.readQuaternionAsync(packet.qw, packet.qx, packet.qy, packet.qz))
-      return;
+      return false;
 
     if (Wire.getError()) 
     {
-      Serial.print("Wire status ");
-      Serial.println(Wire.status(), DEC);
+      //Serial.print("Wire status ");
+      //Serial.println(Wire.status(), DEC);
       imuState=WAITING_FOR_NEW_DATA;
-      return;
+      return false;
     }
 
     imuState=WAITING_FOR_NEW_DATA;
-    //encode & emit packet over USB
 
-    Serial.println("got quaternion");
+    //Serial.println("got quaternion");
+	return true;
   }  
+  return false;
 }

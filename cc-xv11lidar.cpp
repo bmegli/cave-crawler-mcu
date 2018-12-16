@@ -24,7 +24,7 @@ void setupXV11Lidar()
   lidar.setup(XV11LIDAR_RPM);
 }
 
-void processXV11Lidar(xv11lidar_usb_packet &packet)
+bool processXV11Lidar(xv11lidar_usb_packet &packet)
 {
   XV11Packet xv11_packet;
   bool got_packet=lidar.processAvailable(&xv11_packet);
@@ -32,12 +32,12 @@ void processXV11Lidar(xv11lidar_usb_packet &packet)
   lidar.applyMotorPID();
 
   if(!got_packet)
-    return;
+    return false;
 
   packet.timestamp_us = xv11_packet.timestamp_us;
   packet.angle_quad = xv11_packet.angle_quad;
   packet.speed64 = xv11_packet.speed64;
   memcpy(packet.distances, xv11_packet.distances, sizeof(packet.distances));
   
-  //encode & emit packet over USB
+  return true;
 }
