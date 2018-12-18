@@ -17,16 +17,7 @@
 #include "cc-rplidar.h"
 #include "cc-usb-protocol.h"
 
-/* The protocol 
-
-Start of message byte
-Size of message  byte
-Type of message  byte
-Timestamp in us  uint32
-Message payload  variable
-End of message   byte
-
-*/
+UsbNB usb;
 
 void timeStats();
 
@@ -47,8 +38,8 @@ void setup()
   delay(1000);
   Serial.println("setup...");
 
-  setupOdometry();
-  setupXV11Lidar();
+  //setupOdometry();
+  //setupXV11Lidar();
   setupRPLidar();
 
   //temp
@@ -62,17 +53,18 @@ void loop()
   odometry_usb_packet odometry_packet;
   xv11lidar_usb_packet xv11lidar_packet;
   rplidar_usb_packet rplidar_packet;
-  bool got_odometry=false, got_xv11lidar=false, got_rplidar=false;
 
   //get data from devices
-  got_odometry = processOdometry(odometry_packet);
-  got_xv11lidar = processXV11Lidar(xv11lidar_packet);
-  got_rplidar = processRPLidar(rplidar_packet);
+  //if ( processOdometry(odometry_packet) )
+   // usb.push(odometry_packet);
+    
+ // if ( processXV11Lidar(xv11lidar_packet) )
+    //usb.push(xv11lidar_packet);
 
-  //send over USB
-  if(got_odometry) usb_send_odometry(odometry_packet);
-  if(got_xv11lidar) usb_send_xv11lidar(xv11lidar_packet);
-  if(got_rplidar) usb_send_rplidar(rplidar_packet);
+  if ( processRPLidar(rplidar_packet) )
+    usb.push(rplidar_packet);
+
+  usb.send();
   
   timeStats();
 }
