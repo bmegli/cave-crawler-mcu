@@ -17,8 +17,6 @@
 #include "cc-rplidar.h"
 #include "cc-usb-protocol.h"
 
-UsbNB usb;
-
 void timeStats();
 
 //temp time measure
@@ -34,9 +32,9 @@ char databuf[MEM_LEN];
 
 void setup()
 {
-  Serial.begin(115200);
+  CAVECRAWLER_SERIAL.begin(115200);
   delay(1000);
-  Serial.println("setup...");
+  CAVECRAWLER_SERIAL.println("setup...");
 
   //setupOdometry();
   //setupXV11Lidar();
@@ -56,15 +54,15 @@ void loop()
 
   //get data from devices
   //if ( processOdometry(odometry_packet) )
-   // usb.push(odometry_packet);
+   // serialPush(odometry_packet);
     
  // if ( processXV11Lidar(xv11lidar_packet) )
-    //usb.push(xv11lidar_packet);
+    //serialPush(xv11lidar_packet);
 
   if ( processRPLidar(rplidar_packet) )
-    usb.push(rplidar_packet);
+    serialPush(rplidar_packet);
 
-  usb.send();
+  serialSend();
   
   timeStats();
 }

@@ -13,7 +13,7 @@ Firmware code written for Teensy 3.5.
 ## Hardware
 
 ## Dependencies
-
+- [serial-nb-arduino](https://github.com/bmegli/serial-nb-arduino.git)
 - [xv11lidar-arduino](https://github.com/bmegli/xv11lidar-arduino)
    - [Arduino-PID-Library](https://github.com/br3ttb/Arduino-PID-Library)
 - [rplidar-a3-arduino](https://github.com/bmegli/rplidar-a3-arduino.git)

@@ -15,41 +15,19 @@
 #ifndef CC_USB_PROTOCOL
 #define CC_USB_PROTOCOL
 
-/* the usb packet types */
+//use USB as main MCU serial
+#define CAVECRAWLER_SERIAL Serial //this is for USB, alternatively use Serial1, Serial2...
+#define CAVECRAWLER_SERIAL_TYPE usb_serial_class //this is for USB, alternatively use HardwareSerial
+
+/* the serial/usb packet data */
 #include "cc-odometry.h" //struct odometry_usb_packet
 #include "cc-xv11lidar.h" //struct xv11lidar_usb_packet
 #include "cc-rplidar.h" //struct rplidar_usb_packet
 
-#include <stdint.h> //uint8_t
-#include <string.h> //memcpy
+void serialPush(const odometry_usb_packet &packet);
+void serialPush(const xv11lidar_usb_packet &packet);
+void serialPush(const rplidar_usb_packet &packet);
 
-enum {USB_BUFFER_SIZE=512};
-
-class UsbNB
-{
-public:
-	void push(const odometry_usb_packet &packet);
-	void push(const xv11lidar_usb_packet &packet);
-	void push(const rplidar_usb_packet &packet);
-	int send();
-
-	inline int free_bytes() {return USB_BUFFER_SIZE-m_buffer_bytes;};
-
-	void push(const uint8_t *data, int size)
-	{
-		memcpy(m_buffer+m_buffer_bytes, data, size);
-		m_buffer_bytes += size;
-	}
-	
-	template <class T>
-	void push(T val)
-	{
-		memcpy(m_buffer+m_buffer_bytes, &val, sizeof(T));
-		m_buffer_bytes += sizeof(T);
-	}
-private:
-	uint8_t m_buffer[USB_BUFFER_SIZE];
-	int m_buffer_bytes=0;	
-};
+int serialSend();
 
 #endif

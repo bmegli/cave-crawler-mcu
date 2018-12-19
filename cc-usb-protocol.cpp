@@ -12,6 +12,15 @@
  * GNU General Public License for more details.
  */
 
+#include "cc-usb-protocol.h"
+
+#include "serial-nb.h" //non blocking serial communication
+
+#include <string.h> //memcpy
+
+/* global values */
+static SerialNB<CAVECRAWLER_SERIAL_TYPE> g_serial(CAVECRAWLER_SERIAL);
+
 /*
  *
  * TEMP
@@ -19,7 +28,7 @@
  * - for now communication is simple little endian
  * - for now shift buffer (instead of circular buffer)
  * 
- * 
+ *
 ## The packet structure
 
 |          |  Start Byte   |  Size     | Type            |      Payload   | End Byte      |
@@ -51,10 +60,6 @@ Preliminary
 enum {USBNB_ODOMETRY_TYPE=0x01, USBNB_XV11LIDAR_TYPE=0x02, USBNB_RPLIDAR_TYPE=0x03};
 enum {USBNB_ODOMETRY_BYTES=28+4, USBNB_XV11LIDAR_BYTES=15+4, USBNB_RPLIDAR_BYTES=137+4};
 
-#include "cc-usb-protocol.h"
-
-#include <string.h> //memcpy
-
 /*
 ### ODOMETRY
 
@@ -64,24 +69,24 @@ enum {USBNB_ODOMETRY_BYTES=28+4, USBNB_XV11LIDAR_BYTES=15+4, USBNB_RPLIDAR_BYTES
 |   type    | uint32    |   int32      |    int32      |   float    |   float    |   float    |   float    |
 |   unit    |   us      |   counts     |    counts     | quaternion | quaternion | quaternion | quaternion |
 */
-void UsbNB::push(const odometry_usb_packet& packet)
+void serialPush(const odometry_usb_packet& packet)
 {
-	if(free_bytes() < USBNB_ODOMETRY_BYTES)
+	if(g_serial.free_bytes() < USBNB_ODOMETRY_BYTES)
 		return; 
 
-	push((uint8_t)USBNB_START_BYTE);
-	push((uint8_t)USBNB_ODOMETRY_BYTES);
-	push((uint8_t)USBNB_ODOMETRY_TYPE);
+	g_serial.push((uint8_t)USBNB_START_BYTE);
+	g_serial.push((uint8_t)USBNB_ODOMETRY_BYTES);
+	g_serial.push((uint8_t)USBNB_ODOMETRY_TYPE);
 	
-	push(packet.timestamp_us);
-	push(packet.left_encoder_counts);
-	push(packet.right_encoder_counts);
-	push(packet.qw);
-	push(packet.qx);
-	push(packet.qy);
-	push(packet.qz);
+	g_serial.push(packet.timestamp_us);
+	g_serial.push(packet.left_encoder_counts);
+	g_serial.push(packet.right_encoder_counts);
+	g_serial.push(packet.qw);
+	g_serial.push(packet.qx);
+	g_serial.push(packet.qy);
+	g_serial.push(packet.qz);
 	
-	push((uint8_t)USBNB_END_BYTE);
+	g_serial.push((uint8_t)USBNB_END_BYTE);
 }
 
 /*
@@ -101,21 +106,21 @@ void UsbNB::push(const odometry_usb_packet& packet)
 
  */
 
-void UsbNB::push(const xv11lidar_usb_packet& packet)
+void serialPush(const xv11lidar_usb_packet& packet)
 {
-	if(free_bytes() < USBNB_XV11LIDAR_BYTES)
+	if(g_serial.free_bytes() < USBNB_XV11LIDAR_BYTES)
 		return; 
 
-	push((uint8_t)USBNB_START_BYTE);
-	push((uint8_t)USBNB_XV11LIDAR_BYTES);
-	push((uint8_t)USBNB_XV11LIDAR_TYPE);
+	g_serial.push((uint8_t)USBNB_START_BYTE);
+	g_serial.push((uint8_t)USBNB_XV11LIDAR_BYTES);
+	g_serial.push((uint8_t)USBNB_XV11LIDAR_TYPE);
 	
-	push(packet.timestamp_us);
-	push(packet.angle_quad);
-	push(packet.speed64);
-	push((uint8_t*)packet.distances, sizeof(packet.distances));
+	g_serial.push(packet.timestamp_us);
+	g_serial.push(packet.angle_quad);
+	g_serial.push(packet.speed64);
+	g_serial.push((uint8_t*)packet.distances, sizeof(packet.distances));
 	
-	push((uint8_t)USBNB_END_BYTE);	
+	g_serial.push((uint8_t)USBNB_END_BYTE);	
 }
 
 /*
@@ -133,38 +138,23 @@ void UsbNB::push(const xv11lidar_usb_packet& packet)
 - decoding should do the same as [_ultraCapsuleToNormal](https://github.com/Slamtec/rplidar_sdk/blob/master/sdk/sdk/src/rplidar_driver.cpp#L1071) in [rplidar_sdk](https://github.com/Slamtec/rplidar_sdk)
 */
 
-void UsbNB::push(const rplidar_usb_packet& packet)
+void serialPush(const rplidar_usb_packet& packet)
 {
-	if(free_bytes() < USBNB_RPLIDAR_BYTES)
+	if(g_serial.free_bytes() < USBNB_RPLIDAR_BYTES)
 		return; 
 
-	push((uint8_t)USBNB_START_BYTE);
-	push((uint8_t)USBNB_RPLIDAR_BYTES);
-	push((uint8_t)USBNB_RPLIDAR_TYPE);
+	g_serial.push((uint8_t)USBNB_START_BYTE);
+	g_serial.push((uint8_t)USBNB_RPLIDAR_BYTES);
+	g_serial.push((uint8_t)USBNB_RPLIDAR_TYPE);
 	
-	push(packet.timestamp_us);
-	push(packet.sequence);
-	push(packet.data, sizeof(packet.data));
+	g_serial.push(packet.timestamp_us);
+	g_serial.push(packet.sequence);
+	g_serial.push(packet.data, sizeof(packet.data));
 	
-	push((uint8_t)USBNB_END_BYTE);
+	g_serial.push((uint8_t)USBNB_END_BYTE);
 
 }
-int UsbNB::send()
+int serialSend()
 {
-	int available;
-	int written=0;
-
-	while( (available=Serial.availableForWrite()) && m_buffer_bytes-written > 0 )
-	{		
-		int to_write=min(available, m_buffer_bytes-written);
-				
-		written+=Serial.write(m_buffer+written, to_write);
-	}
-	
-	//move the rest of the buffer to the beginning, later change to circular buffer
-	if(written && (m_buffer_bytes-written) )
-		memmove(m_buffer, m_buffer+written, m_buffer_bytes-written);
-	m_buffer_bytes-=written;
-	
-	return written;
+	return g_serial.send();
 }
