@@ -113,7 +113,7 @@ void UsbNB::push(const xv11lidar_usb_packet& packet)
 	push(packet.timestamp_us);
 	push(packet.angle_quad);
 	push(packet.speed64);
-	push((uint8_t*)packet.distances, 4*sizeof(packet.distances[0]));
+	push((uint8_t*)packet.distances, sizeof(packet.distances));
 	
 	push((uint8_t)USBNB_END_BYTE);	
 }
