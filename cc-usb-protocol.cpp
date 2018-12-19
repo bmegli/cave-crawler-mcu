@@ -43,13 +43,13 @@ Preliminary
 |  Type       | Value  | Payload bytes |  Info                                                         |
 | ------------|--------|---------------|-----------------------------------------|
 |  ODOMETRY   | 0x01   |      28       |  encoders and IMU quaternions           |
-|  XV11LIDAR  | 0x02   |               |  lidar data                             |
+|  XV11LIDAR  | 0x02   |      15       |  lidar data                             |
 |  RPLIDARA3  | 0x03   |     137       |  compressed ultra capsules, sequence    |
 
 */
 
 enum {USBNB_ODOMETRY_TYPE=0x01, USBNB_XV11LIDAR_TYPE=0x02, USBNB_RPLIDAR_TYPE=0x03};
-enum {USBNB_ODOMETRY_BYTES=28+4, USBNB_RPLIDAR_BYTES=137+4};
+enum {USBNB_ODOMETRY_BYTES=28+4, USBNB_XV11LIDAR_BYTES=15+4, USBNB_RPLIDAR_BYTES=137+4};
 
 #include "cc-usb-protocol.h"
 
@@ -87,11 +87,35 @@ void UsbNB::push(const odometry_usb_packet& packet)
 /*
 ### XV11LIDAR
 
-  
- * */
+|          | Timestamp | Angle quad            |  Speed64       | Distances x 4 [mm]            |
+| ---------|-----------|-----------------------|----------------|-------------------------------|
+|   bytes  |    4      |      1                |    2           |        8                      |
+|   type   | uint32    |   uint8_t             |  uint16_t      | uint16_t  x 4 (array)         | 
+|   unit   |   us      | 0,89 for 0-3,356-359  | rpm = Speed/64 | flag, distances or error_code |
+
+- the packet is raw XV11Lidar packet with timestamp, without signal strength, CRC
+- Distances are 14 bits mm distances or error code, 1 bit strength warning, 1 bit invalid_data
+    - if invalid_data bit is set, the field carries error code
+    - otherwise it is distance in mm
+    - strength warning when power received is lower than expected for the distance
+
+ */
 
 void UsbNB::push(const xv11lidar_usb_packet& packet)
 {
+	if(free_bytes() < USBNB_XV11LIDAR_BYTES)
+		return; 
+
+	push((uint8_t)USBNB_START_BYTE);
+	push((uint8_t)USBNB_XV11LIDAR_BYTES);
+	push((uint8_t)USBNB_XV11LIDAR_TYPE);
+	
+	push(packet.timestamp_us);
+	push(packet.angle_quad);
+	push(packet.speed64);
+	push((uint8_t*)packet.distances, 4*sizeof(packet.distances[0]));
+	
+	push((uint8_t)USBNB_END_BYTE);	
 }
 
 /*
