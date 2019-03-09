@@ -13,6 +13,7 @@
  */
 
 #include "cc-xv11lidar.h"
+#include "cc-common.h"
 
 #include "xv11lidar.h"
 

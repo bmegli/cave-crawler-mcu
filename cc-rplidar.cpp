@@ -13,6 +13,7 @@
  */
 
 #include "cc-rplidar.h"
+#include "cc-common.h"
 
 static RPLidar lidar(RPLIDAR_SERIAL, RPLIDAR_PWM_PIN); 
 

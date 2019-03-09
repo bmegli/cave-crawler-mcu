@@ -15,10 +15,11 @@
 #ifndef CC_RPLIDAR
 #define CC_RPLIDAR
 
+#include "cc-common.h"
 #include "rplidar.h"
 
 /* Pins */
-const int RPLIDAR_PWM_PIN = 36;
+const int RPLIDAR_PWM_PIN = 2;
 
 const int RPLIDAR_RPM=600; 
 

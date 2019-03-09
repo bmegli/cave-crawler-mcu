@@ -12,6 +12,7 @@
  * GNU General Public License for more details.
  */
 
+#include "cc-common.h"
 #include "cc-odometry.h"
 #include "cc-xv11lidar.h"
 #include "cc-rplidar.h"
@@ -32,12 +33,19 @@ char databuf[MEM_LEN];
 
 void setup()
 {
+  DEBUG_SERIAL.begin(115200);
   CAVECRAWLER_SERIAL.begin(115200);
   delay(1000);
-  CAVECRAWLER_SERIAL.println("setup...");
 
+  DEBUG_SERIAL.println("setup...");
+
+  //DEBUG_SERIAL.println("setup odometry");
   //setupOdometry();
+
+  //DEBUG_SERIAL.println("setup XV11 Lidar");
   //setupXV11Lidar();
+
+  DEBUG_SERIAL.println("setup RP Lidar");
   setupRPLidar();
 
   //temp
@@ -61,7 +69,7 @@ void loop()
 
   if ( processRPLidar(rplidar_packet) )
     serialPush(rplidar_packet);
-
+ 
   serialSend();
   
   timeStats();
@@ -80,10 +88,10 @@ void timeStats()
   if(now_us-last_print_time_us > 1000000)
   {
     last_print_time_us=now_us;
-    Serial.print("current ");
-    Serial.print(loop_time, DEC);
-    Serial.print(" max ");
-    Serial.println(max_loop_time_us, DEC);
+    DEBUG_SERIAL.print("c ");
+    DEBUG_SERIAL.print(loop_time, DEC);
+    DEBUG_SERIAL.print(" m ");
+    DEBUG_SERIAL.println(max_loop_time_us, DEC);
     
     max_loop_time_us=0;
   }  

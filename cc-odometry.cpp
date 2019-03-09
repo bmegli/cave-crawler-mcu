@@ -13,6 +13,7 @@
  */
 
 #include "cc-odometry.h"
+#include "cc-common.h"
 
 #include <EM7180.h>
 #include <Encoder.h>
@@ -48,7 +49,7 @@ void setupOdometry()
   if (!em7180.begin())
     while (true)
     {
-      Serial.println(em7180.getErrorString());       
+      DEBUG_SERIAL.println(em7180.getErrorString());
       delay(1000);
     }   
 }
@@ -77,10 +78,10 @@ bool processOdometry(odometry_usb_packet &packet)
 
     if (em7180.gotError() || Wire.getError()) 
     {
-      //Serial.print("em7180 ERROR: ");
-      //Serial.print(em7180.getErrorString());
-      //Serial.print("Wire status ");
-      //Serial.println(Wire.status(), DEC);
+      DEBUG_SERIAL.print("em7180 ERROR: ");
+      DEBUG_SERIAL.print(em7180.getErrorString());
+      DEBUG_SERIAL.print("Wire status ");
+      DEBUG_SERIAL.println(Wire.status(), DEC);
       imuState=WAITING_FOR_NEW_DATA;
       return false;
     }
@@ -97,8 +98,8 @@ bool processOdometry(odometry_usb_packet &packet)
 
     if (Wire.getError()) 
     {
-      //Serial.print("Wire status ");
-      //Serial.println(Wire.status(), DEC);
+      DEBUG_SERIAL.print("Wire status ");
+      DEBUG_SERIAL.println(Wire.status(), DEC);
       imuState=WAITING_FOR_NEW_DATA;
       return false;
     }

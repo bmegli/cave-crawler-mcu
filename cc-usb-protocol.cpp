@@ -13,6 +13,7 @@
  */
 
 #include "cc-usb-protocol.h"
+#include "cc-common.h"
 
 #include "serial-nb.h" //non blocking serial communication
 
