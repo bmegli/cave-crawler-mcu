@@ -25,7 +25,7 @@ const int LEFT_ENCODER_PIN2=25;
 const int RIGHT_ENCODER_PIN1=11;
 const int RIGHT_ENCODER_PIN2=12;
 
-const int IMU_INTERRUPT_PIN = 2;
+const int IMU_INTERRUPT_PIN = 17;
 
 /* IMU */
 const uint8_t  MAG_RATE       = 100;  // Hz

@@ -39,14 +39,14 @@ void setup()
 
   DEBUG_SERIAL.println("setup...");
 
-  //DEBUG_SERIAL.println("setup odometry");
-  //setupOdometry();
+  DEBUG_SERIAL.println("setup odometry");
+  setupOdometry();
 
   //DEBUG_SERIAL.println("setup XV11 Lidar");
   //setupXV11Lidar();
 
-  DEBUG_SERIAL.println("setup RP Lidar");
-  setupRPLidar();
+  //DEBUG_SERIAL.println("setup RP Lidar");
+  //setupRPLidar();
 
   //temp
   last_loop_time_us=micros();
@@ -61,14 +61,14 @@ void loop()
   rplidar_usb_packet rplidar_packet;
 
   //get data from devices
-  //if ( processOdometry(odometry_packet) )
-   // serialPush(odometry_packet);
-    
- // if ( processXV11Lidar(xv11lidar_packet) )
-    //serialPush(xv11lidar_packet);
+  if ( processOdometry(odometry_packet) )
+    serialPush(odometry_packet);
 
-  if ( processRPLidar(rplidar_packet) )
-    serialPush(rplidar_packet);
+  //if ( processXV11Lidar(xv11lidar_packet) )
+  //  serialPush(xv11lidar_packet);
+
+  //if ( processRPLidar(rplidar_packet) )
+  //  serialPush(rplidar_packet);
  
   serialSend();
   
