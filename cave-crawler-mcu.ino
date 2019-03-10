@@ -35,7 +35,8 @@ void setup()
 {
   DEBUG_SERIAL.begin(115200);
   CAVECRAWLER_SERIAL.begin(115200);
-  delay(1000);
+
+  while(!CAVECRAWLER_SERIAL);
 
   DEBUG_SERIAL.println("setup...");
 
