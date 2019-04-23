@@ -2,6 +2,8 @@
 
 cave-crawler microcontroller firmware code (Teensy 3.5)
 
+See also [cave-crawler-lib](https://github.com/bmegli/cave-crawler-lib) that communicates with this firmware.
+
 Work in early progress
 
 TO DO - add longer description
