@@ -29,10 +29,10 @@ const int IMU_INTERRUPT_PIN = 17;
 
 /* IMU */
 const uint8_t  MAG_RATE       = 100;  // Hz
-const uint16_t ACCEL_RATE     = 200;  // Hz
-const uint16_t GYRO_RATE      = 200;  // Hz
+const uint16_t ACCEL_RATE     = 500;  // Hz
+const uint16_t GYRO_RATE      = 500;  // Hz
 const uint8_t  BARO_RATE      = 50;   // Hz
-const uint8_t  Q_RATE_DIVISOR = 2;    // 1/2 gyro rate
+const uint8_t  Q_RATE_DIVISOR = 1;    // gyro rate
 
 struct odometry_usb_packet
 {

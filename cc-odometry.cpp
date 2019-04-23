@@ -15,7 +15,7 @@
 #include "cc-odometry.h"
 #include "cc-common.h"
 
-#include <EM7180.h>
+#include <EM7180_Master.h>
 #include <Encoder.h>
 #include <i2c_t3.h>
 

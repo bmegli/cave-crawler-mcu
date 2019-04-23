@@ -46,8 +46,8 @@ void setup()
   //DEBUG_SERIAL.println("setup XV11 Lidar");
   //setupXV11Lidar();
 
-  //DEBUG_SERIAL.println("setup RP Lidar");
-  //setupRPLidar();
+  DEBUG_SERIAL.println("setup RP Lidar");
+  setupRPLidar();
 
   //temp
   last_loop_time_us=micros();
@@ -68,8 +68,8 @@ void loop()
   //if ( processXV11Lidar(xv11lidar_packet) )
   //  serialPush(xv11lidar_packet);
 
-  //if ( processRPLidar(rplidar_packet) )
-  //  serialPush(rplidar_packet);
+  if ( processRPLidar(rplidar_packet) )
+    serialPush(rplidar_packet);
  
   serialSend();
   
@@ -97,4 +97,3 @@ void timeStats()
     max_loop_time_us=0;
   }  
 }
-
