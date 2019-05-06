@@ -33,6 +33,8 @@ const uint16_t ACCEL_RATE     = 500;  // Hz
 const uint16_t GYRO_RATE      = 500;  // Hz
 const uint8_t  BARO_RATE      = 50;   // Hz
 const uint8_t  Q_RATE_DIVISOR = 1;    // gyro rate
+const bool ENABLE_WARM_START = true;
+const bool ENABLE_ACCEL_CAL = true;
 
 struct odometry_usb_packet
 {

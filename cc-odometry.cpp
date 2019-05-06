@@ -26,7 +26,7 @@ enum ImuState {WAITING_FOR_NEW_DATA, READING_STATUS, READING_QUATERNION};
 static ImuState imuState;
 static Encoder left_encoder(LEFT_ENCODER_PIN1, LEFT_ENCODER_PIN2);
 static Encoder right_encoder(RIGHT_ENCODER_PIN1, RIGHT_ENCODER_PIN2);
-static EM7180_Master em7180 = EM7180_Master(MAG_RATE, ACCEL_RATE, GYRO_RATE, BARO_RATE, Q_RATE_DIVISOR);
+static EM7180_Master em7180 = EM7180_Master(MAG_RATE, ACCEL_RATE, GYRO_RATE, BARO_RATE, Q_RATE_DIVISOR, ENABLE_ACCEL_CAL, ENABLE_WARM_START);
 
 static volatile bool imu_new_data;
 static volatile unsigned long imu_timestamp_us;
