@@ -18,7 +18,7 @@
 #include <stdint.h> //uint8_t, uint16_t, uint32_T
 
 /* Pins */
-const int XV11LIDAR_PWM_PIN = 35;
+const int XV11LIDAR_PWM_PIN = 29;
 
 /* Serials */
 #define XV11LIDAR_SERIAL Serial2
