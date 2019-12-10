@@ -1,7 +1,7 @@
 /*
  * cave-crawler-mcu firmware sketch for Teensy 3.5
  *
- * Copyright (C) 2018 Bartosz Meglicki <meglickib@gmail.com>
+ * Copyright (C) 2018-2019 Bartosz Meglicki <meglickib@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -59,7 +59,7 @@ Preliminary
 */
 
 enum {USBNB_ODOMETRY_TYPE=0x01, USBNB_XV11LIDAR_TYPE=0x02, USBNB_RPLIDAR_TYPE=0x03};
-enum {USBNB_ODOMETRY_BYTES=28+4, USBNB_XV11LIDAR_BYTES=15+4, USBNB_RPLIDAR_BYTES=137+4};
+enum {USBNB_ODOMETRY_BYTES=28+4, USBNB_XV11LIDAR_BYTES=15+4, USBNB_RPLIDAR_BYTES=138+4};
 
 /*
 ### ODOMETRY
@@ -127,12 +127,13 @@ void serialPush(const xv11lidar_usb_packet& packet)
 /*
 ### RPLIDARA3
 
-|          | Timestamp | Sequence | Data               |
-| ---------|-------- --|----------|--------------------|
-|   bytes  |     4     |    1     |  132               |
-|   type   |   uint32  |  uint8   | ultra_capsules     |
-|   unit   |    us     |  counts  | RPLidarA3 internal |
+|          | Timestamp | Device ID | Sequence | Data               |
+| ---------|-------- --|-----------|----------|--------------------|
+|   bytes  |     4     |     1     |    1     |  132               |
+|   type   |   uint32  |     1     |  uint8   | ultra_capsules     |
+|   unit   |    us     |    ID     | counts   | RPLidarA3 internal |
 
+- device ID identifies lidar when using multiple lidars
 - data is not decoded on MCU due to complexity
 - sequence if for checking if data angles follow one another
 - data corresponds to [rplidar_response_ultra_capsule_measurement_nodes_t](https://github.com/Slamtec/rplidar_sdk/blob/8291e232af614842447a634b6dbd725b81f24713/sdk/sdk/include/rplidar_cmd.h#L197) in [rplidar_sdk](https://github.com/Slamtec/rplidar_sdk)
@@ -148,9 +149,10 @@ void serialPush(const rplidar_usb_packet& packet)
 	g_serial.push((uint8_t)USBNB_RPLIDAR_BYTES);
 	g_serial.push((uint8_t)USBNB_RPLIDAR_TYPE);
 	
-	g_serial.push(packet.timestamp_us);
-	g_serial.push(packet.sequence);
-	g_serial.push(packet.data, sizeof(packet.data));
+	g_serial.push(packet.rp.timestamp_us);
+  g_serial.push(packet.device_id);
+	g_serial.push(packet.rp.sequence);
+	g_serial.push(packet.rp.data, sizeof(packet.rp.data));
 	
 	g_serial.push((uint8_t)USBNB_END_BYTE);
 

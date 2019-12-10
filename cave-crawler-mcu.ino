@@ -1,7 +1,7 @@
 /*
  * cave-crawler-mcu firmware sketch for Teensy 3.5
  *
- * Copyright (C) 2018 Bartosz Meglicki <meglickib@gmail.com>
+ * Copyright (C) 2018-2019 Bartosz Meglicki <meglickib@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as
@@ -14,7 +14,7 @@
 
 #include "cc-common.h"
 #include "cc-odometry.h"
-#include "cc-xv11lidar.h"
+//#include "cc-xv11lidar.h"
 #include "cc-rplidar.h"
 #include "cc-usb-protocol.h"
 
@@ -46,8 +46,11 @@ void setup()
   //DEBUG_SERIAL.println("setup XV11 Lidar");
   //setupXV11Lidar();
 
-  DEBUG_SERIAL.println("setup RP Lidar");
-  setupRPLidar();
+  DEBUG_SERIAL.println("setup RPLidar (vertical)");
+  setupRPLidarVertical();
+
+  DEBUG_SERIAL.println("setup RPLidar (horizontal)");
+  setupRPLidarHorizontal();
 
   //temp
   last_loop_time_us=micros();
@@ -58,17 +61,21 @@ void setup()
 void loop()
 {
   odometry_usb_packet odometry_packet;
-  xv11lidar_usb_packet xv11lidar_packet;
+  //xv11lidar_usb_packet xv11lidar_packet;
   rplidar_usb_packet rplidar_packet;
 
   //get data from devices
+
   if ( processOdometry(odometry_packet) )
-    serialPush(odometry_packet);
+     serialPush(odometry_packet);
 
   //if ( processXV11Lidar(xv11lidar_packet) )
-  //  serialPush(xv11lidar_packet);
+  //serialPush(xv11lidar_packet);
 
-  if ( processRPLidar(rplidar_packet) )
+  if ( processRPLidarVertical(rplidar_packet) )
+    serialPush(rplidar_packet);
+
+  if ( processRPLidarHorizontal(rplidar_packet) )
     serialPush(rplidar_packet);
  
   serialSend();
